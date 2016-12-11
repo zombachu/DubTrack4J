@@ -9,6 +9,12 @@
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
     </properties>
+    <repositories>
+        <repository>
+            <id>jcenter</id>
+            <url>https://jcenter.bintray.com/</url>
+        </repository>
+    </repositories>
     <dependencies>
         <dependency>
             <groupId>org.json</groupId>
@@ -16,9 +22,10 @@
             <version>20141113</version>
         </dependency>
         <dependency>
-            <groupId>com.pubnub</groupId>
-            <artifactId>pubnub</artifactId>
-            <version>3.7.5</version>
+            <groupId>io.ably</groupId>
+            <artifactId>ably-java</artifactId>
+            <version>0.8.7</version>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>commons-io</groupId>
@@ -54,6 +61,32 @@
                     <source>1.8</source>
                     <target>1.8</target>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>2.4.3</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <minimizeJar>false</minimizeJar>
+                            <filters>
+                                <filter>
+                                    <artifact>*:*</artifact>
+                                    <excludes>
+                                        <exclude>META-INF/*.SF</exclude>
+                                        <exclude>META-INF/*.DSA</exclude>
+                                        <exclude>META-INF/*.RSA</exclude>
+                                    </excludes>
+                                </filter>
+                            </filters>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

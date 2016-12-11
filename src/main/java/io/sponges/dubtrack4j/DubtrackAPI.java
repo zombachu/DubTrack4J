@@ -12,7 +12,7 @@
 
 package io.sponges.dubtrack4j;
 
-import com.pubnub.api.PubnubException;
+import io.ably.lib.types.AblyException;
 import io.sponges.dubtrack4j.event.framework.EventBus;
 import io.sponges.dubtrack4j.framework.Room;
 
@@ -38,7 +38,7 @@ public interface DubtrackAPI {
      * @param name the name of the room (name is at the end of room url)
      * @return Room instance
      */
-    Room joinRoom(String name) throws IOException, PubnubException;
+    Room joinRoom(String name) throws IOException, AblyException;
 
     /**
      * Gets the EventBus instance
