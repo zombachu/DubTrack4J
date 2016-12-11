@@ -38,7 +38,8 @@ public enum URL {
     QUEUE_SONG("https://api.dubtrack.fm/room/%s/playlist"),
     REMOVE_SONG("https://api.dubtrack.fm/room/%s/queue/user/%s"),
     ROOM_QUEUE("https://api.dubtrack.fm/room/%s/playlist/details"),
-    PAUSE_QUEUE("https://api.dubtrack.fm/room/%s/queue/pause");
+    PAUSE_QUEUE("https://api.dubtrack.fm/room/%s/queue/pause"),
+    EDIT_ROLE("https://api.dubtrack.fm/chat/%s/%s/user/%s");
 
     private final String url;
 

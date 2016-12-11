@@ -18,6 +18,7 @@ import io.sponges.dubtrack4j.framework.*;
 import io.sponges.dubtrack4j.internal.DubtrackAPIImpl;
 import io.sponges.dubtrack4j.internal.request.*;
 import io.sponges.dubtrack4j.util.Logger;
+import io.sponges.dubtrack4j.util.Role;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -295,4 +296,13 @@ public class RoomImpl implements Room {
         new RemoveSongRequest(dubtrack, id, song.getUser().getId()).request();
     }
 
+    @Override
+    public void setRole(User user, Role role) throws IOException {
+        new SetRoleRequest(dubtrack, id, user.getId(), role.getId()).request();
+    }
+
+    @Override
+    public void unsetRole(User user, Role role) throws IOException {
+        new UnsetRoleRequest(dubtrack, id, user.getId(), role.getId()).request();
+    }
 }

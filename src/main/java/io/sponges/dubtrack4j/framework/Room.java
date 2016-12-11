@@ -13,6 +13,7 @@
 package io.sponges.dubtrack4j.framework;
 
 import io.sponges.dubtrack4j.exception.InvalidUserException;
+import io.sponges.dubtrack4j.util.Role;
 
 import java.io.IOException;
 import java.util.List;
@@ -142,5 +143,14 @@ public interface Room {
     void queueSong(SongInfo.SourceType type, String id) throws IOException;
 
     void removeSong(Song song) throws IOException;
+
+    /**
+     * Sets the role of a user.
+     * @param user the user to set the role of
+     * @param role the role
+     */
+    void setRole(User user, Role role) throws IOException;
+
+    void unsetRole(User user, Role role) throws IOException;
 
 }
