@@ -12,9 +12,9 @@
 
 package io.sponges.dubtrack4j.internal.subscription.callback;
 
-import io.sponges.dubtrack4j.internal.DubtrackAPIImpl;
 import io.sponges.dubtrack4j.event.user.UserLeaveEvent;
 import io.sponges.dubtrack4j.framework.User;
+import io.sponges.dubtrack4j.internal.DubtrackAPIImpl;
 import io.sponges.dubtrack4j.internal.impl.RoomImpl;
 import org.json.JSONObject;
 

@@ -12,8 +12,8 @@
 
 package io.sponges.dubtrack4j.internal.subscription;
 
-import com.pubnub.api.Callback;
-import com.pubnub.api.PubnubError;
+import io.ably.lib.realtime.Channel;
+import io.ably.lib.types.Message;
 import io.sponges.dubtrack4j.internal.DubtrackAPIImpl;
 import io.sponges.dubtrack4j.internal.subscription.callback.*;
 import io.sponges.dubtrack4j.util.Logger;
@@ -23,7 +23,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-public class SubscriptionCallback extends Callback {
+public class SubscriptionCallback implements Channel.MessageListener {
 
     private final DubtrackAPIImpl dubtrack;
     private final Map<String, SubCallback> callbacks;
@@ -45,13 +45,8 @@ public class SubscriptionCallback extends Callback {
     }
 
     @Override
-    public void disconnectCallback(String s, Object o) {
-        Logger.debug("PubNub disconnect: " + s + " " + o);
-    }
-
-    @Override
-    public void successCallback(String s, Object o) {
-        JSONObject json = new JSONObject(o.toString());
+    public void onMessage(Message message) {
+        JSONObject json = new JSONObject(message.data.toString());
         String type = json.getString("type");
 
         Logger.debug(type.toUpperCase() + ": " + json.toString());
@@ -69,31 +64,4 @@ public class SubscriptionCallback extends Callback {
             e.printStackTrace();
         }
     }
-
-    @Override
-    public void successCallback(String s, Object o, String s1) {
-        // TODO something to put in here
-    }
-
-    @Override
-    public void errorCallback(String s, PubnubError pubnubError) {
-        Logger.warning("PubNub error: " + s + " " + pubnubError.getErrorString());
-    }
-
-    @SuppressWarnings("deprecation")
-    @Override
-    public void errorCallback(String s, Object o) {
-        Logger.debug("Error: " + s + " " + o);
-    }
-
-    @Override
-    public void connectCallback(String s, Object o) {
-        Logger.debug("PubNub connect: " + s + " " + o);
-    }
-
-    @Override
-    public void reconnectCallback(String s, Object o) {
-        Logger.debug("PubNub reconnect: " + s + " " + o);
-    }
-
 }

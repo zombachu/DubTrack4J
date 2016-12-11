@@ -12,8 +12,8 @@
 
 package io.sponges.dubtrack4j.internal.impl;
 
-import io.sponges.dubtrack4j.internal.DubtrackAPIImpl;
 import io.sponges.dubtrack4j.framework.*;
+import io.sponges.dubtrack4j.internal.DubtrackAPIImpl;
 import io.sponges.dubtrack4j.internal.request.SkipSongRequest;
 import io.sponges.dubtrack4j.internal.request.SongDubRequest;
 

@@ -13,7 +13,8 @@
 package io.sponges.dubtrack4j.internal;
 
 import com.google.common.collect.ImmutableMap;
-import com.pubnub.api.PubnubException;
+import io.ably.lib.realtime.Channel;
+import io.ably.lib.types.AblyException;
 import io.sponges.dubtrack4j.DubtrackAPI;
 import io.sponges.dubtrack4j.event.framework.EventBus;
 import io.sponges.dubtrack4j.framework.Room;
@@ -69,18 +70,20 @@ public class DubtrackAPIImpl implements DubtrackAPI {
     @Override
     public void logout() {
         for (Subscribe subscribe : subscribers.values()) {
-            subscribe.getPubnub().unsubscribeAll();
+            for (Channel channel : subscribe.getAbly().channels.values()) {
+                channel.unsubscribe();
+            }
         }
 
         // TODO logout request
     }
 
     @Override
-    public Room joinRoom(String name) throws IOException, PubnubException {
+    public Room joinRoom(String name) throws IOException, AblyException {
         JoinRoomRequest request = new JoinRoomRequest(this, name, account);
         JSONObject json = request.request();
         Room room = request.getRoom(json);
-        Subscribe subscribe = new Subscribe(this, room.getName());
+        Subscribe subscribe = new Subscribe(this, name);
         subscribers.put(name, subscribe);
         return room;
     }
