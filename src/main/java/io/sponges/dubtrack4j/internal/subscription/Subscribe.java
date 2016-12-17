@@ -35,7 +35,7 @@ public class Subscribe {
         ClientOptions clientOptions = new ClientOptions();
         clientOptions.environment = "dubtrack";
         clientOptions.fallbackHosts = new String[]{"dubtrack-a.ably-realtime.com"};
-        clientOptions.clientId = "SynergyBot";
+        clientOptions.clientId = dubtrack.getAccount().getUuid();
         clientOptions.authCallback = new Auth.TokenCallback() {
             @Override
             public Object getTokenRequest(Auth.TokenParams tokenParams) throws AblyException {
@@ -67,7 +67,6 @@ public class Subscribe {
         ably = new AblyRealtime(clientOptions);
 
         Channel channel = ably.channels.get("room:" + room);
-        System.out.println("Room " + room);
         channel.subscribe(new SubscriptionCallback(dubtrack));
 
     }
