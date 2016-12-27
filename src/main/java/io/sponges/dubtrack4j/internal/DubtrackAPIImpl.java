@@ -13,8 +13,6 @@
 package io.sponges.dubtrack4j.internal;
 
 import com.google.common.collect.ImmutableMap;
-import io.ably.lib.realtime.Channel;
-import io.ably.lib.types.AblyException;
 import io.sponges.dubtrack4j.DubtrackAPI;
 import io.sponges.dubtrack4j.event.framework.EventBus;
 import io.sponges.dubtrack4j.framework.Room;
@@ -28,6 +26,7 @@ import okhttp3.OkHttpClient;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -70,16 +69,14 @@ public class DubtrackAPIImpl implements DubtrackAPI {
     @Override
     public void logout() {
         for (Subscribe subscribe : subscribers.values()) {
-            for (Channel channel : subscribe.getAbly().channels.values()) {
-                channel.unsubscribe();
-            }
+            subscribe.disconnect();
         }
 
         // TODO logout request
     }
 
     @Override
-    public Room joinRoom(String name) throws IOException, AblyException {
+    public Room joinRoom(String name) throws IOException, URISyntaxException {
         JoinRoomRequest request = new JoinRoomRequest(this, name, account);
         JSONObject json = request.request();
         Room room = request.getRoom(json);

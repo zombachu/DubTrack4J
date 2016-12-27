@@ -12,8 +12,7 @@
 
 package io.sponges.dubtrack4j.internal.subscription;
 
-import io.ably.lib.realtime.Channel;
-import io.ably.lib.types.Message;
+import io.socket.emitter.Emitter;
 import io.sponges.dubtrack4j.internal.DubtrackAPIImpl;
 import io.sponges.dubtrack4j.internal.subscription.callback.*;
 import io.sponges.dubtrack4j.util.Logger;
@@ -23,7 +22,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-public class SubscriptionCallback implements Channel.MessageListener {
+public class SubscriptionCallback implements Emitter.Listener {
 
     private final DubtrackAPIImpl dubtrack;
     private final Map<String, SubCallback> callbacks;
@@ -45,11 +44,17 @@ public class SubscriptionCallback implements Channel.MessageListener {
     }
 
     @Override
-    public void onMessage(Message message) {
-        JSONObject json = new JSONObject(message.data.toString());
-        String type = json.getString("type");
+    public void call(Object... objects) {
+        JSONObject json = new JSONObject(objects[0].toString());
 
-        Logger.debug(type.toUpperCase() + ": " + json.toString());
+        if (json.getInt("action") != 15) {
+            return;
+        }
+
+        JSONObject data = new JSONObject(json.getJSONObject("message").getString("data"));
+        String type = data.getString("type");
+
+        Logger.debug(type.toUpperCase() + ": " + data.toString());
 
         if (type.startsWith("user_update_")) type = "user_update";
 
@@ -59,7 +64,7 @@ public class SubscriptionCallback implements Channel.MessageListener {
         }
 
         try {
-            callbacks.get(type).run(json);
+            callbacks.get(type).run(data);
         } catch (IOException e) {
             e.printStackTrace();
         }

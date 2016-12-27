@@ -12,11 +12,11 @@
 
 package io.sponges.dubtrack4j;
 
-import io.ably.lib.types.AblyException;
 import io.sponges.dubtrack4j.event.framework.EventBus;
 import io.sponges.dubtrack4j.framework.Room;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.Map;
 
 public interface DubtrackAPI {
@@ -38,7 +38,7 @@ public interface DubtrackAPI {
      * @param name the name of the room (name is at the end of room url)
      * @return Room instance
      */
-    Room joinRoom(String name) throws IOException, AblyException;
+    Room joinRoom(String name) throws IOException, URISyntaxException;
 
     /**
      * Gets the EventBus instance

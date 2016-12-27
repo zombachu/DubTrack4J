@@ -12,66 +12,106 @@
 
 package io.sponges.dubtrack4j.internal.subscription;
 
-import io.ably.lib.realtime.AblyRealtime;
-import io.ably.lib.realtime.Channel;
-import io.ably.lib.rest.Auth;
-import io.ably.lib.types.AblyException;
-import io.ably.lib.types.ClientOptions;
+import io.socket.client.IO;
+import io.socket.emitter.Emitter;
+import io.socket.engineio.client.Socket;
+import io.socket.engineio.client.transports.WebSocket;
 import io.sponges.dubtrack4j.internal.DubtrackAPIImpl;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 
 public class Subscribe {
 
     private final DubtrackAPIImpl dubtrack;
-    private AblyRealtime ably;
+    private Socket socket;
+    private String room;
 
-    public Subscribe(DubtrackAPIImpl dubtrack, String room) throws AblyException {
+    public Subscribe(DubtrackAPIImpl dubtrack, String room) throws IOException, URISyntaxException {
         this.dubtrack = dubtrack;
+        this.room = room;
 
-        ClientOptions clientOptions = new ClientOptions();
-        clientOptions.environment = "dubtrack";
-        clientOptions.fallbackHosts = new String[]{"dubtrack-a.ably-realtime.com"};
-        clientOptions.clientId = dubtrack.getAccount().getUuid();
-        clientOptions.authCallback = new Auth.TokenCallback() {
+        connect();
+    }
+
+    public void connect() throws IOException, URISyntaxException {
+        Response tokenResponse = dubtrack.getHttpRequester().get("https://api.dubtrack.fm/auth/token");
+
+        if (!tokenResponse.isSuccessful()) {
+            try {
+                Thread.sleep(5000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            try {
+                connect();
+            } catch (IOException|URISyntaxException e) {
+                e.printStackTrace();
+            }
+            return;
+        }
+
+        ResponseBody body = tokenResponse.body();
+        String result = body.string();
+        body.close();
+
+        JSONObject data = new JSONObject(result).getJSONObject("data");
+        String token = data.getString("token");
+
+        IO.Options options = new IO.Options();
+        options.hostname = "ws.dubtrack.fm";
+        options.secure = true;
+        options.path = "/ws";
+        options.query = "access_token=" + token;
+        options.transports = new String[]{WebSocket.NAME};
+
+        socket = new Socket("wss://ws.dubtrack.fm", options);
+        socket.open();
+
+        socket.on("open", new Emitter.Listener() {
             @Override
-            public Object getTokenRequest(Auth.TokenParams tokenParams) throws AblyException {
+            public void call(Object... objects) {
+                JSONObject json = new JSONObject();
+                json.put("action", 10);
+                json.put("channel", "room:" + room);
+
+                socket.send(json.toString());
+            }
+        });
+        socket.on("close", new Emitter.Listener() {
+            @Override
+            public void call(Object... objects) {
                 try {
-                    Response response = dubtrack.getHttpRequester().get("https://api.dubtrack.fm/auth/token");
-                    ResponseBody body = response.body();
-                    String result = body.string();
-                    body.close();
-                    JSONObject json = new JSONObject(result);
-                    JSONObject data = json.getJSONObject("data");
-
-                    Auth.TokenRequest tokenRequest = new Auth.TokenRequest();
-                    tokenRequest.keyName = data.getString("keyName");
-                    tokenRequest.clientId = data.getString("clientId");
-                    tokenRequest.capability = data.getString("capability");
-                    tokenRequest.timestamp = data.getLong("timestamp");
-                    tokenRequest.nonce = data.getString("nonce");
-                    tokenRequest.mac = data.getString("mac");
-
-                    return tokenRequest;
-                } catch (IOException e) {
+                    Thread.sleep(5000);
+                } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
 
-                return null;
+                try {
+                    connect();
+                } catch (IOException|URISyntaxException e) {
+                    e.printStackTrace();
+                }
             }
-        };
-
-        ably = new AblyRealtime(clientOptions);
-
-        Channel channel = ably.channels.get("room:" + room);
-        channel.subscribe(new SubscriptionCallback(dubtrack));
-
+        });
+        socket.on("message", new SubscriptionCallback(dubtrack));
+        socket.on("error", new Emitter.Listener() {
+            @Override
+            public void call(Object... objects) {
+                System.out.println("Error communicating with Dubtrack.");
+            }
+        });
     }
 
-    public AblyRealtime getAbly() {
-        return ably;
+    public void disconnect() {
+        JSONObject json = new JSONObject();
+        json.put("action", 12);
+        json.put("channel", "room:" + room);
+
+        socket.send(json.toString());
     }
 }
