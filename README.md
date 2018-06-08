@@ -1,6 +1,8 @@
 # DubTrack4J
 A Java API for Dubtrack.
 
+## Warning: I'm only updating this API to suit my own needs. This means that I'm not caring about any feature that I'm not using in my own projects, and it certainly means that I'm not going to provide any support. Use at your own risk.
+
 [![Build Status](https://travis-ci.org/sponges/DubTrack4J.svg?branch=master)](https://travis-ci.org/Sponges/DubTrack4J)
 [![JitPack](https://jitpack.io/v/sponges/dubtrack4j.svg)](https://jitpack.io/#sponges/dubtrack4j)
 
