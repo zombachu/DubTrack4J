@@ -17,6 +17,7 @@ import io.socket.emitter.Emitter;
 import io.socket.engineio.client.Socket;
 import io.socket.engineio.client.transports.WebSocket;
 import io.sponges.dubtrack4j.internal.DubtrackAPIImpl;
+import io.sponges.dubtrack4j.util.URL;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
 import org.json.JSONObject;
@@ -38,7 +39,7 @@ public class Subscribe {
     }
 
     public void connect() throws IOException, URISyntaxException {
-        Response tokenResponse = dubtrack.getHttpRequester().get("https://api.dubtrack.fm/auth/token");
+        Response tokenResponse = dubtrack.getHttpRequester().get(URL.TOKEN.toString());
 
         if (!tokenResponse.isSuccessful()) {
             try {

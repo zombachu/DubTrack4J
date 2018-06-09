@@ -55,13 +55,11 @@ public final class EventBus {
         lock.writeLock().lock();
         try {
             boolean removed = false;
-            for(Class<? extends Event> clazz : consumerMap.keySet()) {
-                Collection<Consumer<Event>> consumers = consumerMap.get(clazz);
-                for (Iterator<Consumer<Event>> iterator = consumers.iterator(); iterator.hasNext(); ) {
-                    if (iterator.next() == consumer) {
-                        iterator.remove();
-                        removed = true;
-                    }
+            Iterator<Consumer<Event>> consumerIterator = consumerMap.values().iterator();
+            while (consumerIterator.hasNext()) {
+                if (consumerIterator.next() == consumer) {
+                    consumerIterator.remove();
+                    removed = true;
                 }
             }
             return removed;

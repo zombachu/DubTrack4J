@@ -29,6 +29,7 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 public class DubtrackAPIImpl implements DubtrackAPI {
 
@@ -48,7 +49,11 @@ public class DubtrackAPIImpl implements DubtrackAPI {
         this.account = new DubAccount(this, username, password);
         this.eventBus = new EventBus();
 
-        this.httpClient = new OkHttpClient.Builder().build();
+        this.httpClient = new OkHttpClient.Builder()
+                .connectTimeout(30, TimeUnit.SECONDS)
+                .readTimeout(30, TimeUnit.SECONDS)
+                .writeTimeout(30, TimeUnit.SECONDS)
+                .build();
         this.requester = new Requester(this);
     }
 

@@ -21,34 +21,49 @@ package io.sponges.dubtrack4j.util;
 public enum URL {
 
     // Auth
-    AUTH("https://api.dubtrack.fm/auth/dubtrack"),
-    SESSION("https://api.dubtrack.fm/auth/session"),
+    AUTH("/auth/dubtrack"),
+    SESSION("/auth/session"),
+    TOKEN("/auth/token"),
 
     // Requests
-    JOIN_ROOM("https://api.dubtrack.fm/room/"),
-    ROOM_INFO("https://api.dubtrack.fm/room/"),
-    SEND_MESSAGE("https://api.dubtrack.fm/chat/"),
-    SONG_DUB("https://api.dubtrack.fm/room/%s/playlist/active/dubs"),
-    SONG_INFO("https://api.dubtrack.fm/song/"),
-    USER_INFO("https://api.dubtrack.fm/user/"),
-    KICK_USER("https://api.dubtrack.fm/chat/kick/%s/user/%s"),
-    BAN_USER("https://api.dubtrack.fm/chat/ban/%s/user/%s"),
-    SKIP_SONG("https://api.dubtrack.fm/chat/skip/%s/%s"),
-    ROOM_PLAYLIST("https://api.dubtrack.fm/room/%s/playlist/active"),
-    QUEUE_SONG("https://api.dubtrack.fm/room/%s/playlist"),
-    REMOVE_SONG("https://api.dubtrack.fm/room/%s/queue/user/%s"),
-    ROOM_QUEUE("https://api.dubtrack.fm/room/%s/playlist/details"),
-    PAUSE_QUEUE("https://api.dubtrack.fm/room/%s/queue/pause"),
-    EDIT_ROLE("https://api.dubtrack.fm/chat/%s/%s/user/%s");
+    JOIN_ROOM("/room/"),
+    ROOM_INFO("/room/"),
+    SEND_MESSAGE("/chat/"),
+    SONG_DUB("/room/%s/playlist/active/dubs"),
+    SONG_INFO("/song/"),
+    USER_INFO("/user/"),
+    KICK_USER("/chat/kick/%s/user/%s"),
+    BAN_USER("/chat/ban/%s/user/%s"),
+    SKIP_SONG("/chat/skip/%s/%s"),
+    ROOM_PLAYLIST("/room/%s/playlist/active"),
+    QUEUE_SONG("/room/%s/playlist"),
+    REMOVE_SONG("/room/%s/queue/user/%s"),
+    ROOM_QUEUE("/room/%s/playlist/details"),
+    PAUSE_QUEUE("/room/%s/queue/pause"),
+    EDIT_ROLE("/chat/%s/%s/user/%s");
 
-    private final String url;
+    private final String host;
+    private final String path;
 
-    URL(String url) {
-        this.url = url;
+    URL(String path) {
+        this("api.dubtrack.fm", path);
+    }
+
+    URL(String host, String path) {
+        this.host = host;
+        this.path = path;
     }
 
     @Override
     public String toString() {
-        return url;
+        return "https://" + host + path;
+    }
+
+    public String getHost() {
+        return host;
+    }
+
+    public String getPath() {
+        return path;
     }
 }
