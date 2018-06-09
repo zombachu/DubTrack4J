@@ -57,7 +57,7 @@ public class JoinRoomRequest implements DubRequest {
 
         // Actually joining the room
         String url = URL.JOIN_ROOM + id + "/users";
-        dubtrack.getHttpRequester().post(url);
+        dubtrack.getHttpRequester().post(url).close();
 
         RoomImpl room = (RoomImpl) dubtrack.getRoom(id);
         if (room == null) {

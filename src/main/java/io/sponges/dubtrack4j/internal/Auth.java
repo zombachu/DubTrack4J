@@ -44,6 +44,7 @@ public class Auth {
         }});
 
         String cookies = response.header("Set-Cookie");
+        response.close();
 
         boolean foundSid = false;
 
